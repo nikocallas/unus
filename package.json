@@ -2,19 +2,30 @@
   "name": "unus",
   "version": "0.1.0",
   "private": true,
-  "description": "Unus — your health passport, by Laymen. One passport. Every record. Every fact proved.",
+  "description": "Unus \u2014 your health passport, by Laymen. One passport. Every record. Every fact proved.",
   "type": "module",
   "engines": {
     "node": ">=24"
   },
   "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
     "fixtures": "node scripts/generate-fixtures.ts",
     "demo:parse": "node scripts/demo-parse.ts",
+    "demo:run": "node scripts/demo-run.ts",
     "test": "node --test \"test/**/*.test.ts\"",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/node": "24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
     "typescript": "7.0.2"
+  },
+  "dependencies": {
+    "next": "16.4.3",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
   }
 }

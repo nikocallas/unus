@@ -23,6 +23,8 @@ export interface CandidateField {
   dateRaw: string | null;
   /** Reference range exactly as printed in the source; never computed, never judged. */
   referenceRangeText: string | null;
+  /** Code exactly as printed in the source (e.g. a LOINC column in a portal export). */
+  sourceCode: string | null;
   /** Spans that back this field. Empty or ambiguous → Thursday's verification gate quarantines it. */
   spanIds: string[];
   extractor: Extractor;
@@ -33,13 +35,4 @@ export interface ExtractionStage {
   name: string;
   extractor: Extractor;
   extract(doc: ParsedDocument): Promise<CandidateField[]>;
-}
-
-export class StageNotImplementedError extends Error {
-  readonly stage: string;
-  constructor(stage: string, message: string) {
-    super(message);
-    this.name = 'StageNotImplementedError';
-    this.stage = stage;
-  }
 }

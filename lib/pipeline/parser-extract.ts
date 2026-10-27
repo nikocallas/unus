@@ -35,6 +35,7 @@ function fromPdf(doc: ParsedDocument, s: PdfStructure): CandidateField[] {
       date: normalizeDate(dateRaw),
       dateRaw,
       referenceRangeText: rangeCol ? row.cells[rangeCol] ?? null : null,
+      sourceCode: null,
       spanIds: [row.spanId, ...(collectedLine ? [collectedLine.spanId] : [])],
       extractor: 'parser',
       ambiguity: ambiguityBySpan.get(row.spanId)?.reason ?? null,
@@ -60,6 +61,7 @@ function fromCsv(doc: ParsedDocument, s: CsvStructure): CandidateField[] {
         date: normalizeDate(r.cells['Result Date']),
         dateRaw: r.cells['Result Date'] ?? null,
         referenceRangeText: r.cells['Reference Range'] || null,
+        sourceCode: r.cells['LOINC'] ? `loinc:${r.cells['LOINC']}` : null,
         spanIds: [r.spanId],
         extractor: 'parser',
         ambiguity: ambiguityBySpan.get(r.spanId)?.reason ?? null,
@@ -92,6 +94,7 @@ function fromJson(doc: ParsedDocument, s: JsonStructure): CandidateField[] {
         date: normalizeDate(dateRaw),
         dateRaw,
         referenceRangeText: null,
+        sourceCode: null,
         spanIds: monthLeaf ? [leaf.spanId, monthLeaf.spanId] : [leaf.spanId],
         extractor: 'parser',
         ambiguity: ambiguityBySpan.get(leaf.spanId)?.reason ?? null,
@@ -107,7 +110,7 @@ function fromVisit(doc: ParsedDocument, s: SectionedTextStructure): CandidateFie
   const dateLine = visit?.lines.find((l) => /^Date:/i.test(l.text));
   const dateRaw = dateLine?.text.replace(/^Date:\s*/i, '').trim() ?? null;
   const dateSpan = dateLine ? [dateLine.spanId] : [];
-  const base = { documentId: doc.document.id, sourceName: doc.document.sourceName, date: normalizeDate(dateRaw), dateRaw, referenceRangeText: null, extractor: 'parser' as const, ambiguity: null };
+  const base = { documentId: doc.document.id, sourceName: doc.document.sourceName, date: normalizeDate(dateRaw), dateRaw, referenceRangeText: null, sourceCode: null, extractor: 'parser' as const, ambiguity: null };
 
   for (const line of s.sections.find((sec) => sec.heading === 'VITALS')?.lines ?? []) {
     const m = /^([^:]+):\s*([\d./]+)\s*(.*)$/.exec(line.text);

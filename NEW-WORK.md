@@ -1,34 +1,42 @@
 # New work manifest
 
-Every file below was created during the hackathon build window (Oct 26 – Nov 4, 2026).
-Nothing pre-existing is presented as a feature. Background only: Laymen brand direction.
+Every file below was created during the hackathon build window (Oct 26 – Nov 4, 2026), with the actual
+date it was built. Nothing pre-existing is presented as a feature. Background only: Laymen brand direction.
 
-## Tue Oct 27 — fixtures + ingest
+## Oct 27 — fixtures + ingest (Phase 1)
 
 | Path | What it is |
 |---|---|
 | `lib/types.ts` | Ingest contract: `SourceDocument`, `ParsedSpan`, per-format structures |
 | `lib/fixtures/rng.ts` | Seeded PRNG (mulberry32) |
 | `lib/fixtures/pdf-writer.ts` | Deterministic minimal PDF writer (plain + FlateDecode pages, TJ kerning) |
-| `lib/fixtures/corpus.ts` | Synthetic corpus generator: lab PDF, portal CSV, wearable JSON, visit summary + manifest of planted cases |
-| `lib/fixtures/check.ts` | Confirms planted cases (two-lab test, conflicts, no-clean-span) survive parsing |
-| `lib/ingest/document.ts` | Stable document ids (sha256), status, text decoding helpers |
-| `lib/ingest/pdf.ts` | PDF text extraction: page tree, content-stream tokenizer, line grouping, table detection |
-| `lib/ingest/csv.ts` | Portal CSV parser: BOM, preamble, quoting, embedded newlines, row + cell spans |
-| `lib/ingest/json.ts` | Wearable JSON parser with exact offsets, JSON pointers and line numbers per leaf |
-| `lib/ingest/text.ts` | Visit summary parser: titled sections with line spans |
-| `lib/ingest/index.ts` | Type detection + dispatch; never throws |
+| `lib/fixtures/corpus.ts` | Synthetic corpus generator: lab PDF, portal CSV, wearable JSON, visit summary + planted-case manifest |
+| `lib/fixtures/check.ts` | Confirms planted cases survive parsing |
+| `lib/ingest/*.ts` | Deterministic parsers (PDF, CSV, JSON, visit text) with stable span ids; never throw |
 | `lib/pipeline/parser-extract.ts` | Deterministic parser-only extraction (model-failure fallback) |
-| `lib/pipeline/timeline.ts` | Parser-only chronological timeline + descriptive coverage stats |
-| `lib/pipeline/run.ts` | Orchestration: ingest → extract (with fallback) → timeline |
-| `lib/agent/types.ts` | `CandidateField` + `ExtractionStage` contract |
-| `lib/agent/extract.ts` | Stage 1 stub (Muse Spark Open) + fallback wrapper |
-| `lib/agent/normalize.ts` | Stage 2 stub (Muse Spark normalize + resolve) |
-| `lib/agent/fhir.ts` | FHIR-shaped resource types with provenance |
-| `lib/agent/verify.ts` | Verification gate types (Thursday) |
-| `lib/config/meta.ts` | Meta model ids and env var names (Standard tier only) |
-| `scripts/generate-fixtures.ts` | `npm run fixtures` |
-| `scripts/demo-parse.ts` | `npm run demo:parse` |
-| `test/*.test.ts` | Unit + end-to-end tests (node:test) |
+| `lib/pipeline/timeline.ts` | Phase 1 parser-only timeline + coverage |
+| `scripts/generate-fixtures.ts`, `scripts/demo-parse.ts` | `npm run fixtures`, `npm run demo:parse` |
 | `fixtures/corpus/*` | Generated synthetic corpus + manifest |
-| `README.md`, `NEW-WORK.md`, `.env.example`, `package.json`, `tsconfig.json`, `.gitignore` | Project scaffolding |
+
+## Oct 27 — agent workflow, app, persistence (Phases 2–5)
+
+| Path | What it is |
+|---|---|
+| `lib/config/meta.ts` | Meta model ids and env var names (Standard tier only) |
+| `lib/models/clients.ts` | Env-gated clients: Muse Spark Open (Baseten), Muse Spark + Muse Image (Meta Model API, Standard-tier attestation required) |
+| `lib/agent/prompts.ts` | Every model prompt, transcription-only |
+| `lib/agent/extract.ts` | Stage 1: Spark Open extraction with span validation; parser fallback |
+| `lib/agent/normalize.ts` | Stage 2a: concept assignment (Muse Spark; deterministic LOINC table fallback) |
+| `lib/agent/verify.ts` | Verification gate: deterministic span checker + Muse Spark review (hold-only) |
+| `lib/agent/resolve.ts` | Stage 2b: entity resolution; differing values kept side by side |
+| `lib/agent/fhir.ts` | FHIR-shaped resource types with provenance |
+| `lib/export/bundle.ts` | Export: FHIR-shaped Bundle of verified resources + separate held-for-review section |
+| `lib/pipeline/passport.ts`, `lib/pipeline/run.ts` | Passport model; orchestrated, streamed, per-stage-labelled workflow |
+| `lib/persistence/supabase.ts` | Optional server-side run log (never load-bearing) |
+| `supabase/migrations/20261027194015_unus_runs.sql` | Fresh Unus project table (RLS on, no client access; snapshots for synthetic sample only) |
+| `app/` | Next.js app: sample + drop-files flows, live agent run, coverage, Record Atlas, held-for-review panel, timeline with filters/search, source drill-down, export |
+| `app/api/run`, `app/api/sample/[name]`, `app/api/atlas` | Streaming run API, sample downloads, Muse Image atlas |
+| `scripts/demo-run.ts` | `npm run demo:run` — full workflow in one command |
+| `test/*.test.ts` | Unit + integration tests, including mocked Meta model paths and failure fallbacks |
+| `submission/*` | Submission drafts: write-up, video script, X post, gallery copy, checklist, compliance report |
+| `README.md`, `NEW-WORK.md`, `.env.example`, `package.json`, `tsconfig.json`, `next.config.ts`, `.gitignore` | Project scaffolding |

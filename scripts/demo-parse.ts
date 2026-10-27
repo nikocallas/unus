@@ -1,15 +1,19 @@
 // npm run demo:parse — generate the synthetic corpus, read it back from disk, run the pipeline
-// (model stage stubbed → parser fallback), and print what parsed and what did not.
+// with the deterministic parsers (Phase 1, no model calls), and print what parsed and what did not.
 
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { writeCorpus, CORPUS_DIR } from './generate-fixtures.ts';
-import { runPipeline } from '../lib/pipeline/run.ts';
+import { ingestFiles } from '../lib/ingest/index.ts';
+import { extractWithParsers } from '../lib/pipeline/parser-extract.ts';
+import { buildTimeline } from '../lib/pipeline/timeline.ts';
 import { checkPlantedCases } from '../lib/fixtures/check.ts';
 
 const corpus = writeCorpus();
 const files = corpus.manifest.files.map((f) => ({ filename: f.filename, bytes: readFileSync(join(CORPUS_DIR, f.filename)) }));
-const run = await runPipeline(files);
+const documents = ingestFiles(files);
+const extraction = documents.filter((d) => d.status !== 'failed').map((d) => ({ documentId: d.document.id, fields: extractWithParsers(d) }));
+const run = { documents, extraction, timeline: buildTimeline(documents, extraction.flatMap((e) => e.fields)) };
 
 console.log(`\nUnus — parse run on synthetic corpus (seed ${corpus.manifest.seed})\n`);
 console.log('Documents');
@@ -24,7 +28,7 @@ for (const d of run.documents) {
 console.log('\nExtraction');
 for (const e of run.extraction) {
   const doc = run.documents.find((d) => d.document.id === e.documentId)!;
-  console.log(`  ${doc.document.filename}: ${e.fields.length} fields via ${e.usedFallback ? `parser fallback (model stage: ${e.primaryError})` : 'model'}`);
+  console.log(`  ${doc.document.filename}: ${e.fields.length} fields via deterministic parsers`);
 }
 
 const { coverage } = run.timeline;
