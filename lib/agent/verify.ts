@@ -77,6 +77,13 @@ export function verifyDeterministic(fields: CandidateField[], spans: ParsedSpan[
   return { published, quarantined };
 }
 
+/** "<location>: <text>" so the reviewer sees what the span is — for JSON, the key path carries the item's name. */
+function spanForReview(s: ParsedSpan): string {
+  const l = s.locator;
+  const where = l.pointer !== undefined ? l.pointer : l.page ? `page ${l.page} line ${l.line}` : l.row ? `row ${l.row}` : `line ${l.line}`;
+  return `${where}: ${s.rawText}`;
+}
+
 /** Muse Spark review over fields that already passed the checker. Can only move fields to quarantine. */
 export async function reviewWithModel(result: VerificationResult, spans: ParsedSpan[], client: ChatClient): Promise<VerificationResult> {
   if (result.published.length === 0) return result;
@@ -92,7 +99,7 @@ export async function reviewWithModel(result: VerificationResult, spans: ParsedS
           value: f.value,
           unit: f.unit,
           date_text: f.dateRaw,
-          source_text: f.spanIds.map((id) => byId.get(id)?.rawText ?? '').join(' | '),
+          source_text: f.spanIds.map((id) => { const sp = byId.get(id); return sp ? spanForReview(sp) : ''; }).join(' | '),
         })),
       ),
     },

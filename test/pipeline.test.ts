@@ -104,6 +104,9 @@ test('Standard tier is enforced: Muse Spark will not run without META_MODEL_API_
   const c = clientsFromEnv({ META_MODEL_API_KEY: 'k', META_SPARK_MODEL: 'm', META_MODEL_API_BASE_URL: 'https://x', META_MODEL_API_TIER: 'contributor' });
   assert.equal(c.muse, null);
   assert.equal(c.museError, 'unavailable:tier_not_standard:META_MODEL_API_TIER');
+  const contributorModel = clientsFromEnv({ META_MODEL_API_KEY: 'k', META_SPARK_MODEL: 'muse-spark-1.3-contributor', META_MODEL_API_BASE_URL: 'https://x', META_MODEL_API_TIER: 'standard' });
+  assert.equal(contributorModel.muse, null);
+  assert.equal(contributorModel.museError, 'unavailable:tier_not_standard:META_SPARK_MODEL');
 });
 
 test('model path: Spark Open fields are gated — a hallucinated value or span never publishes', async () => {

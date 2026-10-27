@@ -48,13 +48,16 @@ export interface ImageClient {
 type FetchLike = typeof fetch;
 
 const TIMEOUT_MS = 45_000;
+// Muse Spark reasons before answering, so its calls get more time and more output tokens.
+const META_TIMEOUT_MS = 150_000;
+export const META_MAX_TOKENS = 16_000;
 
-async function postJson(fetchImpl: FetchLike, url: string, headers: Record<string, string>, body: unknown): Promise<unknown> {
+async function postJson(fetchImpl: FetchLike, url: string, headers: Record<string, string>, body: unknown, timeoutMs = TIMEOUT_MS): Promise<unknown> {
   const res = await fetchImpl(url, {
     method: 'POST',
     headers: { 'content-type': 'application/json', ...headers },
     body: JSON.stringify(body),
-    signal: AbortSignal.timeout(TIMEOUT_MS),
+    signal: AbortSignal.timeout(timeoutMs),
   });
   if (!res.ok) throw new ModelCallError(`HTTP ${res.status}`, res.status);
   return res.json();
@@ -99,6 +102,11 @@ function requireStandardTier(env: Env): void {
   if ((env[tierVar] ?? '').toLowerCase() !== 'standard') throw new ModelUnavailableError('tier_not_standard', tierVar);
 }
 
+/** The Meta Model API exposes Contributor tier as separate model ids (e.g. "muse-spark-1.3-contributor"). Never use them. */
+function requireStandardModel(model: string, envVar: string): void {
+  if (/contributor/i.test(model)) throw new ModelUnavailableError('tier_not_standard', envVar);
+}
+
 /** Muse Spark on the Meta Model API, Standard tier only. Wire format is configurable ('anthropic' | 'openai'). */
 export function museSparkClient(env: Env, fetchImpl: FetchLike = fetch): ChatClient {
   const cfg = META_MODELS.normalization;
@@ -107,16 +115,17 @@ export function museSparkClient(env: Env, fetchImpl: FetchLike = fetch): ChatCli
   requireStandardTier(env);
   const model = env[cfg.env.model];
   if (!model) throw new ModelUnavailableError('missing_model', cfg.env.model);
+  requireStandardModel(model, cfg.env.model);
   const baseUrl = env[cfg.env.baseUrl]?.replace(/\/$/, '');
   if (!baseUrl) throw new ModelUnavailableError('missing_endpoint', cfg.env.baseUrl);
   const format = (env[cfg.env.format] || 'anthropic').toLowerCase();
   return {
-    label: cfg.label,
+    label: `${cfg.label} · ${model}`,
     model,
     async complete(messages, opts) {
-      const maxTokens = opts?.maxTokens ?? 4096;
+      const maxTokens = opts?.maxTokens ?? META_MAX_TOKENS;
       if (format === 'openai') {
-        const json = await postJson(fetchImpl, `${baseUrl}/chat/completions`, { authorization: `Bearer ${key}` }, { model, messages, temperature: 0, max_tokens: maxTokens });
+        const json = await postJson(fetchImpl, `${baseUrl}/chat/completions`, { authorization: `Bearer ${key}` }, { model, messages, temperature: 0, max_tokens: maxTokens }, META_TIMEOUT_MS);
         return openAiText(json);
       }
       const system = messages.filter((m) => m.role === 'system').map((m) => m.content).join('\n\n');
@@ -126,7 +135,7 @@ export function museSparkClient(env: Env, fetchImpl: FetchLike = fetch): ChatCli
         max_tokens: maxTokens,
         temperature: 0,
         messages: messages.filter((m) => m.role === 'user').map((m) => ({ role: 'user', content: m.content })),
-      });
+      }, META_TIMEOUT_MS);
       return anthropicText(json);
     },
   };
@@ -140,21 +149,29 @@ export function museImageClient(env: Env, fetchImpl: FetchLike = fetch): ImageCl
   requireStandardTier(env);
   const model = env[cfg.env.model];
   if (!model) throw new ModelUnavailableError('missing_model', cfg.env.model);
+  requireStandardModel(model, cfg.env.model);
   const url = env[cfg.env.url];
   if (!url) throw new ModelUnavailableError('missing_endpoint', cfg.env.url);
   return {
-    label: cfg.label,
+    label: `${cfg.label} · ${model}`,
     model,
     async generate(prompt) {
-      const json = (await postJson(fetchImpl, url, { authorization: `Bearer ${key}` }, { model, prompt, size: '1536x640', response_format: 'b64_json' })) as {
+      const json = (await postJson(fetchImpl, url, { authorization: `Bearer ${key}` }, { model, prompt, n: 1, response_format: 'b64_json' }, META_TIMEOUT_MS)) as {
         data?: { b64_json?: string; url?: string }[];
       };
       const item = json.data?.[0];
-      if (item?.b64_json) return { dataUrl: `data:image/png;base64,${item.b64_json}` };
+      if (item?.b64_json) return { dataUrl: `data:${imageMime(item.b64_json)};base64,${item.b64_json}` };
       if (item?.url) return { dataUrl: item.url };
       throw new ModelCallError('Unexpected response shape', null);
     },
   };
+}
+
+/** Muse Image returns WebP; sniff the magic bytes rather than assuming a format. */
+function imageMime(b64: string): string {
+  if (b64.startsWith('UklGR')) return 'image/webp';
+  if (b64.startsWith('/9j/')) return 'image/jpeg';
+  return 'image/png';
 }
 
 /** Privacy-safe error category for UI and logs (never the payload). */

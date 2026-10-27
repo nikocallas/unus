@@ -42,7 +42,8 @@ export function normalizationPrompt(items: { key: string; label: string; unit: s
 
 export function reviewPrompt(fields: { id: string; label: string; value: string | null; unit: string | null; date_text: string | null; source_text: string }[]): string {
   return [
-    'Review each item against its source_text. An item is supported only if its label, value, unit and date_text all literally appear in source_text.',
+    'Review each item against its source_text. source_text lists each cited span as "<location>: <text exactly as in the source>".',
+    'An item is supported only if its label, value, unit and date_text all literally appear in source_text. For JSON sources the location is a key path, and the last key counts as the label.',
     'Do not judge the values themselves.',
     'Items:',
     ...fields.map((f) => JSON.stringify(f)),

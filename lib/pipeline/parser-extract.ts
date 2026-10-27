@@ -123,7 +123,7 @@ function fromVisit(doc: ParsedDocument, s: SectionedTextStructure): CandidateFie
   }
   const type = visit?.lines.find((l) => /^Type:/i.test(l.text));
   if (type) {
-    fields.push({ ...base, id: `${type.spanId}#f1`, category: 'visit', label: 'Visit', value: type.text.replace(/^Type:\s*/i, ''), unit: null, spanIds: [type.spanId, ...dateSpan] });
+    fields.push({ ...base, id: `${type.spanId}#f1`, category: 'visit', label: 'Type', value: type.text.replace(/^Type:\s*/i, ''), unit: null, spanIds: [type.spanId, ...dateSpan] });
   }
   return fields;
 }
