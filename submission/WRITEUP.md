@@ -25,7 +25,7 @@ gate that can hold fields but never publish them. **Muse Image** generates the R
 from the record's structure only — sources, counts, date span — never from values. Every prompt is in the
 repo (`lib/agent/prompts.ts`) and restricts the models to transcription. The Meta Model API client refuses
 to run unless Standard tier is attested; Contributor tier is never used.
-[CONFIRM BEFORE SUBMITTING: which of these stages ran with live keys in the recorded demo.]
+Live as of Oct 27: Muse Spark `muse-spark-1.3` (the Standard-tier model id — the client refuses `-contributor` ids) for normalization and review, and Muse Image `muse-image-1.0` for the Atlas. [UPDATE BEFORE SUBMITTING: Spark Open extraction is live only once the Baseten key is set; until then the demo labels extraction as parser fallback.]
 
 ## Technical Depth & Execution (20%)
 

@@ -17,7 +17,7 @@ Laymen team, created Oct 27). Supabase: project "Unus" (`ecymsuoejqqpojbwhxfx`, 
 | 8 | Secrets scan | **Pass** | See below |
 | 9 | Cold start on deployed URL | **Pass** | Logged-out `curl` → 200; first click on "Open the sample passport" runs end to end; no setup |
 | 10 | Mobile | **Pass** | 375×812: no horizontal overflow (scrollWidth = viewport width), filters, timeline, drill-down bottom sheet, held-for-review list checked locally and on the deployed URL |
-| 11 | Performance | **Pass (fallback mode)** | Sample run ~2 s end to end on Vercel; per-stage progress streams live. Re-measure once Meta keys are live. |
+| 11 | Performance | **Pass** | Deployed sample run ~34 s with Muse Spark live (normalize ~19 s, review ~12 s), each stage streamed to the UI as it runs; Muse Image Atlas ~30–60 s, on demand. Fallback-only run ~2 s. |
 
 ## Language scan
 
@@ -51,8 +51,14 @@ expected "RLS enabled, no policy" info notice only). Check constraint stores a p
 `corpus = 'sample'`. Writes need `SUPABASE_SERVICE_ROLE_KEY` on Vercel — not yet set, so deployed runs
 report `persisted: not_configured` and the demo is unaffected.
 
+## Live Meta model verification (Oct 27, deployed URL)
+
+- Endpoint `https://api.meta.ai` lists both `muse-spark-1.3` and `muse-spark-1.3-contributor`: the tier is chosen by model id. Unus uses `muse-spark-1.3` and the client refuses any id containing "contributor" (tested).
+- Muse Spark 1.3 — normalize: live, 17 concepts; LOINC 4548-4 assigned to both "Hemoglobin A1c" (Cascade) and "HGB A1C" (Pinewood). Review pass: live, 0 extra holds after the span checker; the 5 planted holds remain.
+- Muse Image 1.0 — Record Atlas generated live via `POST /v1/images/generations` (WebP), prompt built from structure only.
+- The Vercel key is stored as a sensitive variable; it is not in the repo (scan above).
+
 ## Not yet verified (blockers, not failures)
 
-- Live Meta model calls (no keys/model ids on Vercel). Mocked request/response paths are tested.
-- Muse Image Atlas generation (no endpoint/model id). The slot is labelled; the code-drawn map is shown and labelled as drawn by code.
+- Muse Spark Open extraction on Baseten: `BASETEN_API_KEY` not set, so extraction runs on the labelled parser fallback. Mocked request/response path is tested.
 - Supabase write from the deployed app (service-role key not set).

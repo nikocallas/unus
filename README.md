@@ -45,7 +45,7 @@ ingest     deterministic parsers: PDF text (pages/lines/tables), CSV (rows/cells
 
 All prompts are in [`lib/agent/prompts.ts`](lib/agent/prompts.ts); every one restricts the model to
 transcription. Model clients are in [`lib/models/clients.ts`](lib/models/clients.ts). The Meta Model API
-client refuses to run unless `META_MODEL_API_TIER=standard` is set — Contributor tier is never used.
+client refuses to run unless `META_MODEL_API_TIER=standard` is set, and refuses any model id containing "contributor" (the Meta Model API exposes Contributor tier as separate ids such as `muse-spark-1.3-contributor`). Unus uses `muse-spark-1.3` and `muse-image-1.0`.
 
 **Fallbacks are honest.** If a Meta model stage has no key, no confirmed tier, or its call fails, the
 deterministic path runs instead and the stage is labelled "Fallback" with the exact reason, in the UI
