@@ -1,0 +1,25 @@
+NORTHSHORE SYNTHETIC HEALTH - VISIT SUMMARY
+SYNTHETIC TEST DATA - NOT A REAL PATIENT
+
+PATIENT
+Name: Synthetic Patient A
+ID: SYN-0001-A
+
+VISIT
+Date: 2026-06-02
+Type: Annual visit
+Clinician: Dr. Example Synthetic
+
+VITALS
+Blood pressure: 118/76 mmHg
+Heart rate: 64 bpm
+Weight: 72.4 kg
+Height: 176 cm
+
+MEDICATIONS (AS LISTED)
+atorvastatin 10 mg tablet - 1 tablet by mouth daily
+vitamin D3 1000 IU capsule - 1 capsule by mouth daily
+
+TESTS ORDERED
+Lipid panel
+Hemoglobin A1c

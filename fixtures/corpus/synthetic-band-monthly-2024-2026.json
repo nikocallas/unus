@@ -1,0 +1,244 @@
+{
+  "schema": "synthetic-wearable-aggregate/v1",
+  "notice": "SYNTHETIC TEST DATA - NOT A REAL PATIENT",
+  "source": {
+    "device": "Synthetic Band S2",
+    "vendor": "Synthetic Wearables Co."
+  },
+  "subject_id": "SYN-0001-A",
+  "exported_at": "2026-10-01",
+  "period": "monthly",
+  "records": [
+    {
+      "month": "2024-01",
+      "days_with_data": 21,
+      "resting_hr_bpm": 59,
+      "steps_daily_avg": 8078,
+      "sleep_min_nightly_avg": 420
+    },
+    {
+      "month": "2024-02",
+      "days_with_data": 22,
+      "resting_hr_bpm": 64,
+      "steps_daily_avg": 7773,
+      "sleep_min_nightly_avg": 413
+    },
+    {
+      "month": "2024-03",
+      "days_with_data": 23,
+      "resting_hr_bpm": 63,
+      "steps_daily_avg": 7644,
+      "sleep_min_nightly_avg": 421
+    },
+    {
+      "month": "2024-04",
+      "days_with_data": 26,
+      "resting_hr_bpm": 60,
+      "steps_daily_avg": 9918,
+      "sleep_min_nightly_avg": 405
+    },
+    {
+      "month": "2024-05",
+      "days_with_data": 25,
+      "resting_hr_bpm": 61,
+      "steps_daily_avg": 7091,
+      "sleep_min_nightly_avg": 401
+    },
+    {
+      "month": "2024-06",
+      "days_with_data": 22,
+      "resting_hr_bpm": 60,
+      "steps_daily_avg": 9794,
+      "sleep_min_nightly_avg": 391
+    },
+    {
+      "month": "2024-07",
+      "days_with_data": 29,
+      "resting_hr_bpm": 66,
+      "steps_daily_avg": 7290,
+      "sleep_min_nightly_avg": 437
+    },
+    {
+      "month": "2024-08",
+      "days_with_data": 20,
+      "resting_hr_bpm": 62,
+      "steps_daily_avg": 7754,
+      "sleep_min_nightly_avg": 407
+    },
+    {
+      "month": "2024-09",
+      "days_with_data": 29,
+      "resting_hr_bpm": 64,
+      "steps_daily_avg": 8202,
+      "sleep_min_nightly_avg": 430
+    },
+    {
+      "month": "2024-10",
+      "days_with_data": 27,
+      "resting_hr_bpm": 65,
+      "steps_daily_avg": 8386,
+      "sleep_min_nightly_avg": 432
+    },
+    {
+      "month": "2024-11",
+      "days_with_data": 22,
+      "resting_hr_bpm": 59,
+      "steps_daily_avg": 8711,
+      "sleep_min_nightly_avg": 408
+    },
+    {
+      "month": "2024-12",
+      "days_with_data": 28,
+      "resting_hr_bpm": 66,
+      "steps_daily_avg": 9650,
+      "sleep_min_nightly_avg": 411
+    },
+    {
+      "month": "2025-01",
+      "days_with_data": 24,
+      "resting_hr_bpm": 65,
+      "steps_daily_avg": 8653,
+      "sleep_min_nightly_avg": 400
+    },
+    {
+      "month": "2025-02",
+      "days_with_data": 28,
+      "resting_hr_bpm": 60,
+      "steps_daily_avg": 6954,
+      "sleep_min_nightly_avg": 431
+    },
+    {
+      "month": "2025-03",
+      "days_with_data": 21,
+      "resting_hr_bpm": 63,
+      "steps_daily_avg": 9089,
+      "sleep_min_nightly_avg": 407
+    },
+    {
+      "month": "2025-04",
+      "days_with_data": 22,
+      "resting_hr_bpm": 62,
+      "steps_daily_avg": 7423,
+      "sleep_min_nightly_avg": 397
+    },
+    {
+      "month": "2025-05",
+      "days_with_data": 30,
+      "resting_hr_bpm": 60,
+      "steps_daily_avg": 8769,
+      "sleep_min_nightly_avg": 404
+    },
+    {
+      "month": "2025-06",
+      "days_with_data": 30,
+      "resting_hr_bpm": 63,
+      "steps_daily_avg": 10308,
+      "sleep_min_nightly_avg": 398
+    },
+    {
+      "month": null,
+      "days_with_data": 31,
+      "resting_hr_bpm": 61,
+      "steps_daily_avg": 10398,
+      "sleep_min_nightly_avg": 425
+    },
+    {
+      "month": "2025-08",
+      "days_with_data": 23,
+      "resting_hr_bpm": 58,
+      "steps_daily_avg": 7694,
+      "sleep_min_nightly_avg": 394
+    },
+    {
+      "month": "2025-09",
+      "days_with_data": 29,
+      "resting_hr_bpm": 60,
+      "steps_daily_avg": 9342,
+      "sleep_min_nightly_avg": 444
+    },
+    {
+      "month": "2025-10",
+      "days_with_data": 24,
+      "resting_hr_bpm": 58,
+      "steps_daily_avg": 7689,
+      "sleep_min_nightly_avg": 441
+    },
+    {
+      "month": "2025-11",
+      "days_with_data": 27,
+      "resting_hr_bpm": 63,
+      "steps_daily_avg": 9161,
+      "sleep_min_nightly_avg": 422
+    },
+    {
+      "month": "2025-12",
+      "days_with_data": 27,
+      "resting_hr_bpm": 63,
+      "steps_daily_avg": 10326,
+      "sleep_min_nightly_avg": 409
+    },
+    {
+      "month": "2026-01",
+      "days_with_data": 27,
+      "resting_hr_bpm": 59,
+      "steps_daily_avg": 9744,
+      "sleep_min_nightly_avg": 405
+    },
+    {
+      "month": "2026-02",
+      "days_with_data": 31,
+      "resting_hr_bpm": 63,
+      "steps_daily_avg": 7251,
+      "sleep_min_nightly_avg": 445
+    },
+    {
+      "month": "2026-03",
+      "days_with_data": 24,
+      "resting_hr_bpm": 60,
+      "steps_daily_avg": 9434,
+      "sleep_min_nightly_avg": 402
+    },
+    {
+      "month": "2026-04",
+      "days_with_data": 26,
+      "resting_hr_bpm": 59,
+      "steps_daily_avg": 9370,
+      "sleep_min_nightly_avg": 413
+    },
+    {
+      "month": "2026-05",
+      "days_with_data": 22,
+      "resting_hr_bpm": 58,
+      "steps_daily_avg": 9523,
+      "sleep_min_nightly_avg": 429
+    },
+    {
+      "month": "2026-06",
+      "days_with_data": 26,
+      "resting_hr_bpm": 61,
+      "steps_daily_avg": 9195,
+      "sleep_min_nightly_avg": 437
+    },
+    {
+      "month": "2026-07",
+      "days_with_data": 29,
+      "resting_hr_bpm": 58,
+      "steps_daily_avg": 7759,
+      "sleep_min_nightly_avg": 392
+    },
+    {
+      "month": "2026-08",
+      "days_with_data": 31,
+      "resting_hr_bpm": 61,
+      "steps_daily_avg": 9957,
+      "sleep_min_nightly_avg": 433
+    },
+    {
+      "month": "2026-09",
+      "days_with_data": 28,
+      "resting_hr_bpm": 58,
+      "steps_daily_avg": 7697,
+      "sleep_min_nightly_avg": 397
+    }
+  ]
+}

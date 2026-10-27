@@ -1,0 +1,20 @@
+{
+  "name": "unus",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Unus — your health passport, by Laymen. One passport. Every record. Every fact proved.",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "fixtures": "node scripts/generate-fixtures.ts",
+    "demo:parse": "node scripts/demo-parse.ts",
+    "test": "node --test \"test/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "typescript": "7.0.2"
+  }
+}

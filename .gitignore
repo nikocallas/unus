@@ -1,0 +1,9 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.vercel/
+.next/
+# Live user uploads are processed in-session only and never stored in the repo.
+uploads/
+.DS_Store

@@ -1,0 +1,136 @@
+{
+  "name": "Unus synthetic demo corpus",
+  "seed": 1026,
+  "synthetic": true,
+  "notice": "All records are synthetic and created in-window for the Unus hackathon demo. No real health data.",
+  "files": [
+    {
+      "filename": "cascade-lab-report-2025-03-14.pdf",
+      "type": "lab_pdf",
+      "sha256": "26d79cfc6c1079b5c415d983df2fbcb2dd8324aa58bf018d6a993fa3ea3c9236",
+      "byteLength": 3035
+    },
+    {
+      "filename": "northshore-portal-export-2026-09-30.csv",
+      "type": "portal_csv",
+      "sha256": "95cfc5dee382fa28608cf165a8f7ffb86fa31fcfec0c1383b52c63b79a3aa471",
+      "byteLength": 1301
+    },
+    {
+      "filename": "synthetic-band-monthly-2024-2026.json",
+      "type": "wearable_json",
+      "sha256": "59fbca6d2f6614e185ea05cd8a9f51a6453422e514b6ec54849679c6c495654e",
+      "byteLength": 5614
+    },
+    {
+      "filename": "northshore-visit-summary-2026-06-02.txt",
+      "type": "visit_summary",
+      "sha256": "31460ccdd5e824988134a18f0976b8d2c43523ad19e6ee433c040ca6b4ba64e9",
+      "byteLength": 470
+    }
+  ],
+  "dateSpan": {
+    "start": "2024-01",
+    "end": "2026-09"
+  },
+  "plantedCases": [
+    {
+      "id": "a1c-two-labs",
+      "kind": "same_test_two_labs",
+      "description": "Hemoglobin A1c reported by two different labs under different names; Thursday entity resolution is expected to place them on one timeline entry with every source listed.",
+      "occurrences": [
+        {
+          "filename": "cascade-lab-report-2025-03-14.pdf",
+          "label": "Hemoglobin A1c",
+          "date": "2025-03-13",
+          "value": "5.6",
+          "unit": "%"
+        },
+        {
+          "filename": "northshore-portal-export-2026-09-30.csv",
+          "label": "HGB A1C",
+          "date": "2025-09-22",
+          "value": "5.5",
+          "unit": "%"
+        },
+        {
+          "filename": "northshore-portal-export-2026-09-30.csv",
+          "label": "HGB A1C",
+          "date": "2026-08-11",
+          "value": "5.6",
+          "unit": "%"
+        }
+      ]
+    },
+    {
+      "id": "a1c-conflict",
+      "kind": "conflicting_value",
+      "description": "Same Cascade A1c specimen: the lab PDF prints 5.6, the portal re-report says 5.8. Both must be shown side by side.",
+      "occurrences": [
+        {
+          "filename": "cascade-lab-report-2025-03-14.pdf",
+          "label": "Hemoglobin A1c",
+          "date": "2025-03-13",
+          "value": "5.6",
+          "unit": "%"
+        },
+        {
+          "filename": "northshore-portal-export-2026-09-30.csv",
+          "label": "Hemoglobin A1c",
+          "date": "2025-03-13",
+          "value": "5.8",
+          "unit": "%"
+        }
+      ]
+    },
+    {
+      "id": "weight-conflict",
+      "kind": "conflicting_value",
+      "description": "Weight on 2026-06-02: visit summary prints 72.4 kg, portal export says 72.9 kg. Both must be shown side by side.",
+      "occurrences": [
+        {
+          "filename": "northshore-visit-summary-2026-06-02.txt",
+          "label": "Weight",
+          "date": "2026-06-02",
+          "value": "72.4",
+          "unit": "kg"
+        },
+        {
+          "filename": "northshore-portal-export-2026-09-30.csv",
+          "label": "Weight",
+          "date": "2026-06-02",
+          "value": "72.9",
+          "unit": "kg"
+        }
+      ]
+    },
+    {
+      "id": "ferritin-no-span",
+      "kind": "no_clean_span",
+      "description": "Ferritin row has an empty result cell; the value appears only in page-2 addendum free text with no stated date. Expected to be quarantined.",
+      "occurrences": [
+        {
+          "filename": "cascade-lab-report-2025-03-14.pdf",
+          "label": "Ferritin",
+          "date": null,
+          "value": null,
+          "unit": "ng/mL"
+        }
+      ]
+    },
+    {
+      "id": "wearable-missing-month",
+      "kind": "no_clean_span",
+      "description": "One monthly wearable record has month: null, so its values cannot be tied to a date. Expected to be quarantined.",
+      "occurrences": [
+        {
+          "filename": "synthetic-band-monthly-2024-2026.json",
+          "label": "resting_hr_bpm",
+          "date": null,
+          "value": null,
+          "unit": null
+        }
+      ]
+    }
+  ]
+}
