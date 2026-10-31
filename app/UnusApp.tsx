@@ -364,7 +364,7 @@ function Results(props: {
         </div>
       </section>
 
-      <Atlas passport={passport} />
+      {passport.entries.length > 0 && <Atlas passport={passport} />}
 
       {passport.quarantined.length > 0 && (
         <section className="card held">
@@ -470,7 +470,8 @@ function Results(props: {
 
 function Atlas({ passport }: { passport: Passport }) {
   const [muse, setMuse] = useState<{ status: 'idle' | 'loading' | 'generated' | 'unavailable' | 'failed'; image?: string; reason?: string; label?: string }>({ status: 'idle' });
-  const docs = passport.documents;
+  // Only documents that were read have a place on the map.
+  const docs = passport.documents.filter((d) => d.status !== 'failed');
   const start = passport.coverage.dateSpan.start;
   const end = passport.coverage.dateSpan.end;
   const toMonths = (d: string) => Number(d.slice(0, 4)) * 12 + Number(d.slice(5, 7)) - 1;
