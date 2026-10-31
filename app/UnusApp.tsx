@@ -354,7 +354,9 @@ function Results(props: {
               <li key={d.id}>
                 <span className={`badge ${d.status === 'failed' ? 'unread' : ''}`}>{d.status === 'failed' ? 'Not read' : 'Read'}</span>{' '}
                 <strong>{d.filename}</strong>
-                <span className="src"> · {DOC_TYPE[d.type] ?? 'document'}{d.status !== 'failed' ? ` · ${d.fieldCount ?? 0} ${(d.fieldCount ?? 0) === 1 ? 'item' : 'items'} found` : ''}</span>
+                {d.status !== 'failed' && (
+                  <span className="src"> · {DOC_TYPE[d.type] ?? 'document'} · {d.fieldCount ?? 0} {(d.fieldCount ?? 0) === 1 ? 'item' : 'items'} found</span>
+                )}
                 {d.status === 'failed' && d.issues[0] && <div className="why">{d.issues[0]}</div>}
               </li>
             ))}
