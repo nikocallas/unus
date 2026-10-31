@@ -12,7 +12,8 @@ export const dynamic = 'force-dynamic';
 export const maxDuration = 300;
 
 const MAX_FILES = 12;
-const MAX_BYTES = 5 * 1024 * 1024;
+// Vercel rejects request bodies over ~4.5 MB before this code runs; the client checks the same limit first.
+const MAX_BYTES = 4 * 1024 * 1024;
 
 async function readInput(req: Request): Promise<{ corpus: 'sample' | 'upload'; files: InputFile[] } | { error: string }> {
   const type = req.headers.get('content-type') ?? '';
@@ -21,7 +22,7 @@ async function readInput(req: Request): Promise<{ corpus: 'sample' | 'upload'; f
     const entries = form.getAll('files').filter((f): f is File => typeof f !== 'string');
     if (entries.length === 0) return { error: 'No files received.' };
     if (entries.length > MAX_FILES) return { error: `Up to ${MAX_FILES} files per run.` };
-    if (entries.some((f) => f.size > MAX_BYTES)) return { error: 'Each file must be 5 MB or smaller.' };
+    if (entries.reduce((n, f) => n + f.size, 0) > MAX_BYTES) return { error: 'Files must total 4 MB or less per run.' };
     const files = await Promise.all(entries.map(async (f) => ({ filename: f.name, bytes: new Uint8Array(await f.arrayBuffer()) })));
     return { corpus: 'upload', files };
   }

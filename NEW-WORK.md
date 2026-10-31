@@ -40,3 +40,13 @@ date it was built. Nothing pre-existing is presented as a feature. Background on
 | `test/*.test.ts` | Unit + integration tests, including mocked Meta model paths and failure fallbacks |
 | `submission/*` | Submission drafts: write-up, video script, X post, gallery copy, checklist, compliance report |
 | `README.md`, `NEW-WORK.md`, `.env.example`, `package.json`, `tsconfig.json`, `next.config.ts`, `.gitignore` | Project scaffolding |
+
+## Oct 31 — hardening (weekend build block)
+
+| Path | What changed |
+|---|---|
+| `lib/pipeline/run.ts`, `lib/pipeline/passport.ts` | No model call when nothing was extracted (stage says "Nothing to normalize"); per-document item counts |
+| `app/UnusApp.tsx`, `app/globals.css` | Documents list showing which files were read or not read and why; empty-run message; upload size/count checked before sending |
+| `app/api/run/route.ts` | Upload limit aligned with the hosting platform (4 MB per run) |
+| `test/pipeline.test.ts` | Edge-case test: unreadable uploads are reported and trigger no model calls |
+

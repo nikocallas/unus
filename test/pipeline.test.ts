@@ -170,3 +170,22 @@ test('normalizeDate keeps ISO, converts US dates, rejects unknown', () => {
   assert.equal(normalizeDate('next Tuesday'), null);
   assert.equal(normalizeDate(null), null);
 });
+
+test('unreadable uploads: failed documents are reported and no model is called for an empty run', async () => {
+  let calls = 0;
+  const counting: typeof fetch = async () => { calls++; return new Response('{}', { status: 500 }); };
+  const clients = clientsFromEnv({ META_MODEL_API_KEY: 'k', META_MODEL_API_TIER: 'standard', META_SPARK_MODEL: 'muse-spark-test', META_MODEL_API_BASE_URL: 'https://meta.example' }, counting);
+  const p = await runPipeline(
+    [
+      { filename: 'broken.pdf', bytes: Buffer.from('not a pdf') },
+      { filename: 'photo.png', bytes: Buffer.from([0x89, 0x50]) },
+    ],
+    { corpus: 'upload', clients },
+  );
+  assert.equal(calls, 0);
+  assert.deepEqual(p.documents.map((d) => d.status), ['failed', 'failed']);
+  assert.ok(p.documents.every((d) => d.issues.length > 0 && d.fieldCount === 0));
+  assert.equal(p.entries.length, 0);
+  assert.equal(p.stages.find((s) => s.stage === 'normalize')!.engine, 'Nothing to normalize');
+  assert.ok(p.stages.every((s) => !s.fallback || s.stage === 'extract'));
+});

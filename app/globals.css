@@ -131,5 +131,13 @@ a { color: var(--gold); }
 .excerpt .hit { background: var(--gold-soft); outline: 1px solid var(--gold); }
 .excerpt .amb { background: var(--slate-soft); }
 
+.docs { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 10px; }
+.docs .k { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+.docs ul { list-style: none; margin: 0; padding: 0; }
+.docs li { padding: 5px 0; font-size: 13px; overflow-wrap: anywhere; }
+.docs .src { color: var(--muted); }
+.docs .why { font-size: 12px; color: var(--slate); margin-top: 2px; }
+.badge.unread { background: var(--slate-soft); color: var(--slate); }
+
 .footer { margin-top: 48px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; }
 .error { color: #8a3b12; background: #fbeee6; border-radius: 10px; padding: 10px 14px; margin-top: 16px; font-size: 14px; }

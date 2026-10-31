@@ -26,6 +26,8 @@ export interface PassportDocument {
   date: string | null;
   status: ParseStatus;
   spanCount: number;
+  /** Candidate fields extracted from this document (before verification). */
+  fieldCount: number;
   issues: string[];
 }
 

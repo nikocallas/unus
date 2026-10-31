@@ -26,7 +26,7 @@ There is no chat, no accounts, no clinician loop.
 ## Built Oct 26 – Nov 4
 
 Everything in this repository was built during the Meta Global AI Developer Hackathon build window.
-Work to date was built **Oct 27, 2026**; see [`NEW-WORK.md`](NEW-WORK.md) for the dated, file-by-file manifest.
+Work to date was built **Oct 27 and Oct 31, 2026**; see [`NEW-WORK.md`](NEW-WORK.md) for the dated, file-by-file manifest.
 
 **Prior-work disclosure:** the only thing carried in from before the window is Laymen brand direction
 (the lowercase "laymen" wordmark and the gold/emerald palette). No pre-existing Laymen code, features or

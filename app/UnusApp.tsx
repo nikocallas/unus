@@ -28,6 +28,8 @@ const FILTERS: { id: Filter; label: string }[] = [
 
 const CATEGORY_LABEL: Record<FieldCategory, string> = { lab: 'Lab', vital: 'Vital', activity: 'Activity', medication: 'Medication', visit: 'Visit' };
 const STORAGE_KEY = 'unus.passport.v1';
+const MAX_FILES = 12;
+const MAX_UPLOAD_BYTES = 4 * 1024 * 1024;
 const DOC_TYPE: Record<string, string> = { lab_pdf: 'lab report PDF', portal_csv: 'portal export', wearable_json: 'wearable export', visit_summary: 'visit summary' };
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -121,6 +123,7 @@ export default function UnusApp({ sampleFiles }: { sampleFiles: string[] }) {
     try {
       const res = await fetch('/api/run', { method: 'POST', ...init });
       if (!res.ok || !res.body) {
+        if (res.status === 413) throw new Error('Files must total 4 MB or less per run.');
         const body = (await res.json().catch(() => ({}))) as { error?: string };
         throw new Error(body.error ?? 'The run could not start.');
       }
@@ -159,6 +162,9 @@ export default function UnusApp({ sampleFiles }: { sampleFiles: string[] }) {
   const runFiles = (files: FileList | File[]) => {
     const list = [...files];
     if (list.length === 0) return;
+    // Checked here too: oversize requests are rejected by the hosting platform before the API can explain why.
+    if (list.length > MAX_FILES) { setError(`Up to ${MAX_FILES} files per run.`); return; }
+    if (list.reduce((n, f) => n + f.size, 0) > MAX_UPLOAD_BYTES) { setError('Files must total 4 MB or less per run.'); return; }
     const form = new FormData();
     for (const f of list) form.append('files', f);
     run({ body: form });
@@ -341,6 +347,19 @@ function Results(props: {
         <p className="sub" style={{ marginTop: 8 }}>
           Engines — extract: {passport.engines.extract} · normalize: {passport.engines.normalize} · verify: {passport.engines.review}
         </p>
+        <div className="docs">
+          <div className="k">Documents</div>
+          <ul>
+            {passport.documents.map((d) => (
+              <li key={d.id}>
+                <span className={`badge ${d.status === 'failed' ? 'unread' : ''}`}>{d.status === 'failed' ? 'Not read' : 'Read'}</span>{' '}
+                <strong>{d.filename}</strong>
+                <span className="src"> · {DOC_TYPE[d.type] ?? 'document'}{d.status !== 'failed' ? ` · ${d.fieldCount ?? 0} ${(d.fieldCount ?? 0) === 1 ? 'item' : 'items'} found` : ''}</span>
+                {d.status === 'failed' && d.issues[0] && <div className="why">{d.issues[0]}</div>}
+              </li>
+            ))}
+          </ul>
+        </div>
       </section>
 
       <Atlas passport={passport} />
@@ -375,7 +394,13 @@ function Results(props: {
           ))}
           <input className="search" type="search" placeholder="Search tests, sources, values" value={query} onChange={(e) => props.setQuery(e.target.value)} />
         </div>
-        {visible.length === 0 && <div className="empty">{filter === 'imaging' ? 'No imaging records in these sources.' : 'No entries match.'}</div>}
+        {visible.length === 0 && (
+          <div className="empty">
+            {passport.entries.length === 0
+              ? 'No dated entries could be read from these files. The Documents list above shows what was read.'
+              : filter === 'imaging' ? 'No imaging records in these sources.' : 'No entries match.'}
+          </div>
+        )}
         {byYear.map(([year, days]) => (
           <div key={year}>
             <div className="year">{year}</div>

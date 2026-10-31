@@ -33,6 +33,7 @@ export type RunEvent =
 
 const PARSER_ENGINE = 'Deterministic parsers (fallback)';
 const RULES_ENGINE = 'Deterministic rules (fallback)';
+const NOTHING_ENGINE = 'Nothing to normalize';
 
 export async function runPipeline(
   files: InputFile[],
@@ -74,29 +75,36 @@ export async function runPipeline(
   );
   const fields = extraction.flatMap((e) => e.fields);
 
-  let normalizeFallback: string | null = clients.museError;
-  const concepts = await timed('normalize', clients.muse?.label ?? RULES_ENGINE, async () => {
-    if (clients.muse) {
+  // With nothing extracted there is nothing to send to a model; say so rather than claim a model ran.
+  const nothingToNormalize = fields.length === 0;
+  let normalizeFallback: string | null = nothingToNormalize ? null : clients.museError;
+  const concepts = await timed('normalize', nothingToNormalize ? NOTHING_ENGINE : clients.muse?.label ?? RULES_ENGINE, async () => {
+    if (clients.muse && !nothingToNormalize) {
       try { return await modelConcepts(fields, clients.muse); } catch (err) { normalizeFallback = errorCategory(err); }
     }
     return deterministicConcepts(fields);
   }, (m: Map<string, ConceptAssignment>) => ({
-    engine: normalizeFallback ? RULES_ENGINE : clients.muse!.label,
+    engine: nothingToNormalize ? NOTHING_ENGINE : normalizeFallback ? RULES_ENGINE : clients.muse!.label,
     fallback: normalizeFallback !== null,
     fallbackReason: normalizeFallback,
     detail: `${new Set([...m.values()].map((c) => c.conceptKey)).size} concepts`,
   }));
 
   const spans = docs.flatMap((d) => d.spans);
-  let reviewFallback: string | null = clients.museError;
-  const verified = await timed('verify', clients.muse ? `Span checker + ${clients.muse.label}` : 'Span checker', async () => {
+  let reviewFallback: string | null = nothingToNormalize ? null : clients.museError;
+  let reviewed = false;
+  const verified = await timed('verify', clients.muse && !nothingToNormalize ? `Span checker + ${clients.muse.label}` : 'Span checker', async () => {
     const checked = verifyDeterministic(fields, spans);
-    if (clients.muse) {
-      try { return await reviewWithModel(checked, spans, clients.muse); } catch (err) { reviewFallback = errorCategory(err); }
+    if (clients.muse && checked.published.length > 0) {
+      try {
+        const result = await reviewWithModel(checked, spans, clients.muse);
+        reviewed = true;
+        return result;
+      } catch (err) { reviewFallback = errorCategory(err); }
     }
     return checked;
   }, (v: VerificationResult) => ({
-    engine: reviewFallback ? 'Span checker (review pass not run)' : `Span checker + ${clients.muse!.label}`,
+    engine: reviewed ? `Span checker + ${clients.muse!.label}` : reviewFallback ? 'Span checker (review pass not run)' : 'Span checker',
     fallback: reviewFallback !== null,
     fallbackReason: reviewFallback,
     detail: `${v.published.length} verified, ${v.quarantined.length} held for review`,
@@ -131,6 +139,7 @@ export async function runPipeline(
         date: d.document.date,
         status: d.status,
         spanCount: d.spans.length,
+        fieldCount: fields.filter((f) => f.documentId === d.document.id).length,
         issues: d.issues.map((i) => i.message),
       })),
       spans: spans.map(({ id, documentId, locator, rawText, ambiguity }) => ({ id, documentId, locator, rawText, ambiguity })),

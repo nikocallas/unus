@@ -1,4 +1,4 @@
-# Compliance + test report — Oct 27, 2026
+# Compliance + test report — Oct 27, 2026 (updated Oct 31)
 
 Commit tested: `main` at the time of writing. Deployed: https://unus-mu.vercel.app (Vercel project `unus`,
 Laymen team, created Oct 27). Supabase: project "Unus" (`ecymsuoejqqpojbwhxfx`, created Oct 27).
@@ -7,7 +7,7 @@ Laymen team, created Oct 27). Supabase: project "Unus" (`ecymsuoejqqpojbwhxfx`, 
 
 | # | Test | Result | How |
 |---|---|---|---|
-| 1 | Unit: generator determinism, every parser, entity resolution, verification gate | **Pass** | `npm test` — 29/29 |
+| 1 | Unit: generator determinism, every parser, entity resolution, verification gate | **Pass** | `npm test` — 30/30 (Oct 31) |
 | 2 | Integration, baked-in corpus: fixtures → … → export, every published field has a span, quarantined fields nowhere as verified | **Pass** | `npm test` (integration tests), `npm run demo:run` |
 | 3 | Integration, drop-files flow: same timeline as baked-in | **Pass** | In-browser drop of the 4 downloaded sample files (local prod build) and multipart upload to the deployed API: 149 entries / 153 verified / 5 held / 2 differing — identical |
 | 4 | Model failure: broken Meta clients → labelled parser fallback, no crash, no fake output | **Pass** | Test "model-failure" (HTTP 503 on every Meta call); deployed app with no keys shows "Fallback — Not configured (ENV_VAR)" per stage |
@@ -50,6 +50,11 @@ Table `public.unus_runs`: RLS enabled, no policies, `anon`/`authenticated` revok
 expected "RLS enabled, no policy" info notice only). Check constraint stores a passport snapshot only for
 `corpus = 'sample'`. Writes need `SUPABASE_SERVICE_ROLE_KEY` on Vercel — not yet set, so deployed runs
 report `persisted: not_configured` and the demo is unaffected.
+
+## Oct 31 re-test on the deployed URL
+
+- Sample run, logged-out, Muse Spark 1.3 live: ~32 s; 149 entries / 153 verified / 5 held / 2 differing — unchanged from Oct 27.
+- Edge uploads: a broken PDF and a PNG are reported per document as "Not read" with the reason; a CSV with no recognizable columns reads with "0 items found"; no model is called when nothing was extracted; an empty request returns HTTP 400 with a message; uploads over 4 MB are stopped in the browser with a message (the platform itself rejects bodies over ~4.5 MB).
 
 ## Live Meta model verification (Oct 27, deployed URL)
 
