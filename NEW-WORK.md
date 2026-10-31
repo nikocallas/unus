@@ -46,7 +46,7 @@ date it was built. Nothing pre-existing is presented as a feature. Background on
 | Path | What changed |
 |---|---|
 | `lib/pipeline/run.ts`, `lib/pipeline/passport.ts` | No model call when nothing was extracted (stage says "Nothing to normalize"); per-document item counts |
-| `app/UnusApp.tsx`, `app/globals.css` | Documents list showing which files were read or not read and why; empty-run message; upload size/count checked before sending |
+| `app/UnusApp.tsx`, `app/globals.css` | Documents list showing which files were read or not read and why; empty-run message; upload size/count checked before sending; Record Atlas hidden for empty runs and drawn only from documents that were read |
 | `app/api/run/route.ts` | Upload limit aligned with the hosting platform (4 MB per run) |
 | `test/pipeline.test.ts` | Edge-case test: unreadable uploads are reported and trigger no model calls |
 
