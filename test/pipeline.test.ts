@@ -186,6 +186,7 @@ test('unreadable uploads: failed documents are reported and no model is called f
   assert.deepEqual(p.documents.map((d) => d.status), ['failed', 'failed']);
   assert.ok(p.documents.every((d) => d.issues.length > 0 && d.fieldCount === 0));
   assert.equal(p.entries.length, 0);
+  assert.equal(p.stages.find((s) => s.stage === 'extract')!.engine, 'Nothing to extract');
   assert.equal(p.stages.find((s) => s.stage === 'normalize')!.engine, 'Nothing to normalize');
-  assert.ok(p.stages.every((s) => !s.fallback || s.stage === 'extract'));
+  assert.ok(p.stages.every((s) => !s.fallback));
 });

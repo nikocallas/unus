@@ -65,6 +65,7 @@ export async function runPipeline(
     () => Promise.all(usable.map((d) => extractDocument(d, clients.sparkOpen, clients.sparkOpenError))),
     (r: ExtractionResult[]) => {
       const fellBack = r.filter((x) => x.usedFallback);
+      if (r.length === 0) return { engine: 'Nothing to extract', fallback: false, fallbackReason: null, detail: 'No readable documents' };
       return {
         engine: fellBack.length === r.length ? PARSER_ENGINE : clients.sparkOpen!.label,
         fallback: fellBack.length > 0,
